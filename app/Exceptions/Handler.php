@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+use Facades\App\Facades\ReturnErrorFacade;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -44,6 +46,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // dd($exception instanceof ValidationException);
+        if ($request->expectsJson() && $exception instanceof ValidationException) {
+            return $this->validationExceptionToErrorResource($exception, $request);
+        }
+
         return parent::render($request, $exception);
     }
 
@@ -61,5 +68,10 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest(route('login'));
+    }
+
+    protected function validationExceptionToErrorResource(ValidationException $e, $request)
+    {
+        return ReturnErrorFacade::validationError($e);
     }
 }
