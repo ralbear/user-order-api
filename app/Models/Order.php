@@ -11,4 +11,8 @@ class Order extends Model
         'status',
         'amount'
     ];
+
+    protected $casts = [
+        'user_id' => 'integer'
+    ];
 }
