@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\User;
+use App\Models\Order;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -12,13 +15,24 @@
 */
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(User::class, function (Faker\Generator $faker) {
     static $password;
 
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = bcrypt('secret'),
+        'password' => '$2y$10$DKM5h/dyinG6F1bPKNlCw.tTYaf9F.x6sgHFoFY77xTz4lKrJsnjW',
         'remember_token' => str_random(10),
+    ];
+});
+
+$factory->define(Order::class, function (Faker\Generator $faker) {
+    static $password;
+
+    return [
+        'user_id' => $faker->name,
+        'title' => $faker->sentence($nbWords = 6, $variableNbWords = true),
+        'status' => $faker->randomElement($array = array ('draft','accepted','delivered')),
+        'amount' => $faker->numberBetween(000, 99999)
     ];
 });
