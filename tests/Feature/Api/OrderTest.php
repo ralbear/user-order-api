@@ -25,7 +25,7 @@ class OrderTest extends TestCase
         $users->wasRecentlyCreated = false;
 
         $orders = factory(Order::class, 5)->create([
-            'user_id' => $users[2]->id
+            'user_id' => (int) $users[2]->id
         ]);
         $orders->wasRecentlyCreated = false;
 
@@ -44,7 +44,7 @@ class OrderTest extends TestCase
                     ]
                 ])
                 ->assertJsonFragment([
-                    'user_id' => $users[2]->id
+                    'user_id' => (int) $users[2]->id
                 ]);
     }
 
@@ -54,7 +54,7 @@ class OrderTest extends TestCase
         $users->wasRecentlyCreated = false;
 
         $orders = factory(Order::class, 5)->create([
-            'user_id' => $users[2]->id
+            'user_id' => (int) $users[2]->id
         ]);
         $orders->wasRecentlyCreated = false;
 
@@ -79,7 +79,7 @@ class OrderTest extends TestCase
         $response->assertStatus(201)
                 ->assertJson([
                     'data' => [
-                        'user_id' => $users[3]->id,
+                        'user_id' => (int) $users[3]->id,
                         'title' => $title,
                         'status' => $status,
                         'amount' => $amount
