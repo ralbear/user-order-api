@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +11,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->name('api.')->group(function () {
+    Route::prefix('v1')->name('v1.')->namespace('Api')->group(function () {
+        Route::get('orders', 'OrderController@readAll')->name('readAll');
+        Route::get('orders/{orderId}', 'OrderController@read')->name('read');
+        Route::post('orders', 'OrderController@create')->name('create');
+    });
 });
