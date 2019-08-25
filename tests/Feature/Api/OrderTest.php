@@ -64,6 +64,52 @@ class OrderTest extends TestCase
         $response->assertStatus(204);
     }
 
+    public function testUserCanAccessOneOfHisOrders()
+    {
+        $users = factory(User::class, 5)->create();
+        $users->wasRecentlyCreated = false;
+
+        $orders = factory(Order::class, 5)->create([
+            'user_id' => (int) $users[2]->id
+        ]);
+        $orders->wasRecentlyCreated = false;
+
+        $response = $this->actingAs($users[2], 'api')
+                        ->json('GET', '/api/v1/orders/' . $orders[2]->id);
+        
+        $response->assertStatus(200)
+                ->assertJson([
+                    'data' => [
+                        'user_id' => (int) $users[2]->id,
+                        'title' => $orders[2]->title,
+                        'status' => $orders[2]->status,
+                        'amount' => $orders[2]->amount
+                    ]
+                ]);
+    }
+
+    public function testUserCantAccessOneOrderIfIsFromOther()
+    {
+        $users = factory(User::class, 5)->create();
+        $users->wasRecentlyCreated = false;
+
+        $userOrders = factory(Order::class, 5)->create([
+            'user_id' => (int) $users[2]->id
+        ]);
+        $userOrders->wasRecentlyCreated = false;
+
+        $otherUserOrders = factory(Order::class, 5)->create([
+            'user_id' => (int) $users[4]->id
+        ]);
+        $otherUserOrders->wasRecentlyCreated = false;
+
+
+        $response = $this->actingAs($users[2], 'api')
+                        ->json('GET', '/api/v1/orders/' . $otherUserOrders[4]->id);
+        
+        $response->assertStatus(403);
+    }
+
     public function testUserCanCreateOrders()
     {
         $users = factory(User::class, 5)->create();
